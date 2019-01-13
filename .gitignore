@@ -4,6 +4,18 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
+/Assets/Audio
+/Assets/Fonts
+/Assets/Lobby
+/Assets/Materials
+/Assets/Models
+/Assets/Prefabs
+/Assets/Scenes
+/Assets/Sprites
+/Assets/Textures
+/Assets/Virtual Joystick Pack
+/Assets/FX
+/Assets/NetworkLobby_Third-PartyNotice.txt
 
 # Visual Studio cache directory
 .vs/
