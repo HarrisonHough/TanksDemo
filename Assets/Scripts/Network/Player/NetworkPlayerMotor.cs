@@ -28,8 +28,15 @@ public class NetworkPlayerMotor : NetworkBehaviour {
 
 	}
 
-    public void MovePlayer(Vector3 dir) {
-        Vector3 moveDirection = dir * moveSpeed * Time.deltaTime;
+    public void MovePlayer(Vector3 direction) {
+        //TODO Change to Network GameManager
+        if (NetworkGameManager.Instance.Gamestate != GameState.InGame)
+        {
+            rigidbody.velocity = Vector3.zero;
+            return;
+        }
+        Vector3 moveDirection = direction * moveSpeed * Time.deltaTime;
+
         rigidbody.velocity = moveDirection;
 
     }
@@ -45,14 +52,14 @@ public class NetworkPlayerMotor : NetworkBehaviour {
 
     }
 
-    public void RotateChassis(Vector3 dir)
+    public void RotateChassis(Vector3 direction)
     {
-        FaceDirection(baseTransform, dir, baseRotateSpeed);
+        FaceDirection(baseTransform, direction, baseRotateSpeed);
     }
 
 
-    public void RotateTurret(Vector3 dir)
+    public void RotateTurret(Vector3 direction)
     {
-        FaceDirection(turretTransform, dir, turretRotateSpeed);
+        FaceDirection(turretTransform, direction, turretRotateSpeed);
     }
 }

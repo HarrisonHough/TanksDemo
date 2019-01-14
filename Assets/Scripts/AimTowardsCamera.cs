@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AimCamera : MonoBehaviour {
+public class AimTowardsCamera : MonoBehaviour {
 
     public Camera camera;
 

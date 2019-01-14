@@ -7,27 +7,26 @@ using UnityEngine.UI;
 public class NetworkPlayerSetup : NetworkBehaviour {
 
     [SerializeField]
-    private Color localColor;
+    private Color playerColor;
     [SerializeField]
-    private string basename = "PLAYER";
+    private string playerName = "PLAYER";
     [SerializeField]
     private int playerNum = 1;
     [SerializeField]
     private Text playerNameText;
     [SerializeField]
     private MeshRenderer[] meshesToColour;
-    [SerializeField]
-    private Behaviour[] componentsToDisable;
 
     private void Start()
     {
+        /*
         if (!isLocalPlayer)
         {
             foreach (Behaviour component in componentsToDisable)
             {
                 component.enabled = false;
             }
-        }
+        }*/
     }
 
     public override void OnStartLocalPlayer()
@@ -37,14 +36,13 @@ public class NetworkPlayerSetup : NetworkBehaviour {
 
         for (int i = 0; i < meshesToColour.Length; i++)
         {
-            meshesToColour[i].materials[0].color = localColor;
+            meshesToColour[i].materials[0].color = playerColor;
         }
 
         if (playerNameText != null)
         {
-            
             playerNameText.enabled = true;
-            playerNameText.text = basename + " "+ + playerNum;
+            playerNameText.text = playerName + " "+ + playerNum;
         }
     }
 

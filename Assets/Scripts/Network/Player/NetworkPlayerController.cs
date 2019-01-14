@@ -2,53 +2,132 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-
+using UnityEngine.Events;
 
 public class NetworkPlayerController : NetworkBehaviour {
 
-    private NetworkPlayerHealth playerHealth;
-    private NetworkPlayerMotor playerMotor;
-    private NetworkPlayerSetup playerSetup;
-    private NetworkPlayerShoot playerShoot;
+    [SerializeField]
+    private FixedJoystick moveJoystick;
+    [SerializeField]
+    private FixedJoystick aimJoystick;
 
-    // Use this for initialization
-    void Start() {
-        playerHealth = GetComponent<NetworkPlayerHealth>();
-        playerMotor = GetComponent<NetworkPlayerMotor>();
-        playerSetup = GetComponent<NetworkPlayerSetup>();
-        playerShoot = GetComponent<NetworkPlayerShoot>();
+    protected NetworkPlayerHealth health;
+    protected NetworkPlayerMotor motor;
+    protected NetworkPlayerSetup setup;
+    protected NetworkPlayerShoot shoot;
 
-    }
+    protected Vector3 inputVector;
 
-    Vector3 GetInput() {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        return new Vector3(h, 0, v);
-    }
+    [SerializeField]
+    private Behaviour[] nonLocalcomponentsToDisable;
 
-    private void FixedUpdate()
+    public UnityEvent OnDeathEvent;
+    public UnityEvent OnRespawnEvent;
+
+    private bool isDead = false;
+
+    // Start is called before the first frame update
+    private void Start()
     {
-        //if not local player
-        if (!isLocalPlayer)
-            return;
+        health = GetComponent<NetworkPlayerHealth>();
+        motor = GetComponent<NetworkPlayerMotor>();
+        setup = GetComponent<NetworkPlayerSetup>();
+        shoot = GetComponent<NetworkPlayerShoot>();
 
-        Vector3 inputDirection = GetInput();
-        playerMotor.MovePlayer(inputDirection);
+        if (!isLocalPlayer)
+        {
+            DisableNonLocalPlayerComponents();
+        }
     }
 
     private void Update()
     {
-        //if not local player
-        if (!isLocalPlayer)
+        if (NetworkGameManager.Instance.Gamestate != GameState.InGame || !isLocalPlayer || isDead)
             return;
 
-        Vector3 inputDirection = GetInput();
-        if (inputDirection.sqrMagnitude > 0.25f)
-        {
-            playerMotor.RotateChassis(inputDirection);
-        }
+        inputVector = GetInputVector();
+        //Debug.Log("Input Vector is " + inputVector);
+        UpdateChassisRotation();
+        UpdateTurretRotation();
+        ShootCheck();
+    }
 
-        Vector3 turretDir = Utility.GetWorldPointFromScreen(Input.mousePosition, playerMotor.TurretTransform.position.y) - playerMotor.TurretTransform.position;
-        playerMotor.RotateTurret(turretDir);
+    private void FixedUpdate()
+    {
+        if (NetworkGameManager.Instance.Gamestate != GameState.InGame || !isLocalPlayer || isDead)
+            return;
+
+        motor.MovePlayer(inputVector);
+    }
+
+    private void UpdateTurretRotation()
+    {
+        Vector3 turretDirection = Utility.GetWorldPointFromScreen(Input.mousePosition, motor.TurretTransform.position.y) - motor.TurretTransform.position;
+        
+        //Debug.Log("turret Direction" + turretDirection + "\n Mouse Position = " + Input.mousePosition);
+        motor.RotateTurret(turretDirection);
+    }
+
+    private void UpdateChassisRotation()
+    {
+
+        if (inputVector.sqrMagnitude > 0.25f)
+        {
+            motor.RotateChassis(inputVector);
+        }
+    }
+
+    private void Move()
+    {
+        motor.MovePlayer(inputVector);
+    }
+
+
+
+    private Vector3 GetInputVector()
+    {
+        return new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+    }
+
+    private void ShootCheck()
+    {
+        if (GameManager.Instance.Gamestate == GameState.InGame)
+            if (Input.GetMouseButtonDown(0))
+            {
+                shoot.Shoot();
+            }
+    }
+
+    private void PlayerRespawn()
+    {
+        health.ResetPlayerHealth();
+        OnRespawnEvent.Invoke();
+    }
+
+    public void Death()
+    {
+        if (!isDead)
+        {
+            StartCoroutine(RespawnRoutine());
+        }
+        
+    }
+
+
+    private void DisableNonLocalPlayerComponents()
+    {
+        //hide components
+        foreach (Behaviour component in nonLocalcomponentsToDisable)
+        {
+            component.enabled = false;
+        }
+    }
+
+    IEnumerator RespawnRoutine()
+    {
+        isDead = true;
+        OnDeathEvent.Invoke();
+        
+        yield return null;
     }
 }

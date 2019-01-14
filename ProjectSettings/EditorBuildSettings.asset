@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/HomeScene.unity
     guid: 96087e2d9a3ca0f418aec014bf4d1a41
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/OfflineScene.unity
     guid: ac5b4e2f5eec7834c8d9d5649ca23528
   - enabled: 1
@@ -16,5 +16,5 @@ EditorBuildSettings:
     guid: c2dfccb5760634e4fbc595f640ba2977
   - enabled: 1
     path: Assets/Scenes/NetworkScene.unity
-    guid: e47608811053eab4eb76fd53cc360abb
+    guid: 55ef8ad90c5e5a941b263981b853875e
   m_configObjects: {}

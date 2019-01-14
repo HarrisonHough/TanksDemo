@@ -45,7 +45,9 @@ public class NetworkPool : NetworkBehaviour
         int lastPoolSize = objectPool.Count;
         for (int i = 0; i < poolSize; i++)
         {
+
             var pooledObject = Instantiate(prefabToPool);
+            NetworkServer.Spawn(pooledObject);
             pooledObject.name += " " + (i + lastPoolSize);
             pooledObject.transform.parent = transform;
             pooledObject.AddComponent<NetworkPoolMember>();
