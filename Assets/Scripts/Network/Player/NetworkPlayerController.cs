@@ -25,7 +25,7 @@ public class NetworkPlayerController : NetworkBehaviour {
     public UnityEvent OnRespawnEvent;
 
     private bool isDead = false;
-
+    public int score;
     // Start is called before the first frame update
     private void Start()
     {
@@ -129,5 +129,15 @@ public class NetworkPlayerController : NetworkBehaviour {
         OnDeathEvent.Invoke();
         
         yield return null;
+    }
+
+
+    public void Disable()
+    {
+
+    }
+
+    public void Enable()
+    {
     }
 }
