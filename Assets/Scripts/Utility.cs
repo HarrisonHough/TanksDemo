@@ -5,7 +5,7 @@ using UnityEngine;
 public class Utility : MonoBehaviour {
 
 
-    public static Vector3 GetWorldPointFromScreen(Vector3 screenPoint, float height)
+    public static Vector3 GetWorldPointFromScreenPoint(Vector3 screenPoint, float height)
     {
         Ray ray = Camera.main.ScreenPointToRay(screenPoint);
 

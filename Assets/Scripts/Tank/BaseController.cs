@@ -43,7 +43,7 @@ public class BaseController : MonoBehaviour
 
     protected virtual void UpdateTurretRotation()
     {
-        Vector3 turretDir = Utility.GetWorldPointFromScreen(Input.mousePosition, motor.TurretTransform.position.y) - motor.TurretTransform.position;
+        Vector3 turretDir = Utility.GetWorldPointFromScreenPoint(Input.mousePosition, motor.TurretTransform.position.y) - motor.TurretTransform.position;
         motor.RotateTurret(turretDir);
     }
 

@@ -13,12 +13,18 @@ public class NetworkPool : NetworkBehaviour
     private Queue<GameObject> objectsQueue = new Queue<GameObject>();
     private List<GameObject> objectPool = new List<GameObject>();
 
+    public NetworkHash128 assetId { get; set; }
+
+    public delegate GameObject SpawnDelegate(Vector3 position, NetworkHash128 assetId);
+    public delegate void UnSpawnDelegate(GameObject spawned);
+
     /// <summary>
     /// Use this for initialization
     /// </summary>
     void Start()
     {
-        GrowPool();
+        if (isServer)
+            GrowPool();
     }
 
     /// <summary>
@@ -33,21 +39,23 @@ public class NetworkPool : NetworkBehaviour
         }
 
         var pooledObject = objectsQueue.Dequeue();
-
+        pooledObject.SetActive(true);
         return pooledObject;
     }
+
 
     /// <summary>
     /// 
     /// </summary>
     private void GrowPool()
     {
+        assetId = prefabToPool.GetComponent<NetworkIdentity>().assetId;
+
         int lastPoolSize = objectPool.Count;
         for (int i = 0; i < poolSize; i++)
         {
 
             var pooledObject = Instantiate(prefabToPool);
-            NetworkServer.Spawn(pooledObject);
             pooledObject.name += " " + (i + lastPoolSize);
             pooledObject.transform.parent = transform;
             pooledObject.AddComponent<NetworkPoolMember>();
@@ -61,6 +69,19 @@ public class NetworkPool : NetworkBehaviour
 
             pooledObject.SetActive(false);
         }
+
+        ClientScene.RegisterSpawnHandler(assetId, SpawnObject, UnSpawnObject);
+    }
+
+    public GameObject SpawnObject(Vector3 position, NetworkHash128 assetId)
+    {
+        return GetObject();
+    }
+
+    public void UnSpawnObject(GameObject spawned)
+    {
+        Debug.Log("Re-pooling GameObject " + spawned.name);
+        spawned.SetActive(false);
     }
 
     /// <summary>
