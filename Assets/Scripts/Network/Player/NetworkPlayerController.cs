@@ -26,7 +26,8 @@ public class NetworkPlayerController : NetworkBehaviour
     public UnityEvent OnRespawnEvent;
 
     private bool isDead = false;
-    public int score;
+    [SyncVar]
+    public int Score = 0;
 
     private float respawnTime = 5f;
     // Start is called before the first frame update
@@ -45,7 +46,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void Update()
     {
-        if (NetworkGameManager.Instance.Gamestate != GameState.InGame || !isLocalPlayer || isDead)
+        if (!isLocalPlayer || isDead)
             return;
 
         inputVector = GetInputVector();
@@ -101,13 +102,25 @@ public class NetworkPlayerController : NetworkBehaviour
             }
     }
 
+    public void Reset()
+    {
+        health.ResetPlayerHealth();
+        motor.Reset();
+        shoot.Reset();
+
+    }
+
     private void PlayerRespawn()
     {
         //spawn at new position
         //TODO create spawn point system
-        transform.position = Vector3.zero;
-        health.ResetPlayerHealth();
+
+        Transform newSpawnPoint = NetworkGameManager.Instance.GetSpawnPoint();
+        transform.position = newSpawnPoint.position;
+        transform.rotation = newSpawnPoint.rotation;
+        
         OnRespawnEvent.Invoke();
+        Reset();
         isDead = false;
         NetworkGameManager.Instance.SpawnFX(transform.position);
 
@@ -145,5 +158,17 @@ public class NetworkPlayerController : NetworkBehaviour
         //wait for time
         PlayerRespawn();
         
+    }
+
+    public void EnablePlayerControls()
+    {
+        motor.Enable();
+        shoot.Enable();
+    }
+
+    public void DisablePlayerControls()
+    {
+        motor.Disable();
+        shoot.Disable();
     }
 }

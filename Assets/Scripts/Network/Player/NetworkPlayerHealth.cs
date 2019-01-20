@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class NetworkPlayerHealth : NetworkBehaviour, IDamagable<int>
+public class NetworkPlayerHealth : NetworkBehaviour
 {
     [SyncVar(hook = "UpdateHealthBar")]
     private int currentHealth;
@@ -20,7 +20,7 @@ public class NetworkPlayerHealth : NetworkBehaviour, IDamagable<int>
 //         get { return isDead; }
 //     }
 
-    private GameObject lastAttacker;
+    private NetworkPlayerController lastAttacker;
     private float lastDamageTime = 0;
     [SerializeField]
     private Slider healthSlider;
@@ -42,7 +42,7 @@ public class NetworkPlayerHealth : NetworkBehaviour, IDamagable<int>
         isDead = false;
     }
 
-    public void Damage(int damage, GameObject enemyObject)
+    public void Damage(int damage, NetworkPlayerController attacker)
     {
         if (!isServer)
         {
@@ -54,17 +54,54 @@ public class NetworkPlayerHealth : NetworkBehaviour, IDamagable<int>
         lastDamageTime = Time.time;
         currentHealth -= damage;
         Debug.Log("Damage Taken By AI");
-        lastAttacker = enemyObject;
+        if(attacker != playerController)
+            lastAttacker = attacker;
         //TODO fix update health bar
         UpdateHealthBar(currentHealth);
 
         if (currentHealth <= 0 && !isDead)
         {
-            //GameManager.Instance.UpdateScoreboard();
+            //add to attackers score
+            if (lastAttacker != null)
+            {
+                lastAttacker.Score++;
+            }
+            //or do nothing if you killed yourself-or subtract from score?
+            NetworkGameManager.Instance.UpdateScoreboard();
+
             isDead = true;
             RpcDie();
+
+            //TODO Check this works
+            playerController.Death();
         }
     }
+
+//     public void Damage(int damage, GameObject enemyObject)
+//     {
+//         if (!isServer)
+//         {
+//             return;
+//         }
+// 
+//         if (Time.time - lastDamageTime < 0.1f)
+//             return;
+//         lastDamageTime = Time.time;
+//         currentHealth -= damage;
+//         Debug.Log("Damage Taken By AI");
+// 
+//         //lastAttacker = enemyObject;
+// 
+//         //TODO fix update health bar
+//         UpdateHealthBar(currentHealth);
+// 
+//         if (currentHealth <= 0 && !isDead)
+//         {
+//             //GameManager.Instance.UpdateScoreboard();
+//             isDead = true;
+//             RpcDie();
+//         }
+//     }
 
     private void UpdateHealthBar(int health)
     {
@@ -89,9 +126,5 @@ public class NetworkPlayerHealth : NetworkBehaviour, IDamagable<int>
     {
 
         NetworkGameManager.Instance.SpawnExplodeFX(transform.position);
-        //TODO upgrade to Network gameManager
-//         GameObject explodeFX = NetworkGameManager.Instance.ExplodeFXPool.GetObject();
-//         explodeFX.transform.position = transform.position;
-//         explodeFX.SetActive(true);
     }
 }

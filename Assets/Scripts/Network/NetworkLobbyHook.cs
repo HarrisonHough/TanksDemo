@@ -20,10 +20,10 @@ public class NetworkLobbyHook : LobbyHook
         playerSetup.PlayerColor = lPlayer.playerColor;
 
 
-        NetworkPlayerController pManager = gamePlayer.GetComponent<NetworkPlayerController>();
-        if (pManager != null)
+        NetworkPlayerController playerController = gamePlayer.GetComponent<NetworkPlayerController>();
+        if (playerController != null)
         {
-            NetworkGameManager.AllPlayers.Add(pManager);
+            NetworkGameManager.AllPlayers.Add(playerController);
         }
 
     }

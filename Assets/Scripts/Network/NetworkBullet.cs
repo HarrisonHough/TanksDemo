@@ -18,7 +18,7 @@ public class NetworkBullet : NetworkBehaviour
     private float speed = 100;
     public float Speed { get { return speed; } }
 
-
+    NetworkPlayerController owner;
 
     // Start is called before the first frame update
     void Awake()
@@ -34,6 +34,11 @@ public class NetworkBullet : NetworkBehaviour
 
     public void SetVelocity(Transform spawnPoint)
     {
+        rigidbody.velocity = speed * spawnPoint.transform.forward;
+    }
+    public void Launch(Transform spawnPoint, NetworkPlayerController owner)
+    {
+        this.owner = owner;
         rigidbody.velocity = speed * spawnPoint.transform.forward;
     }
 
@@ -85,11 +90,17 @@ public class NetworkBullet : NetworkBehaviour
         {
 
             Explode();
-            IDamagable<int> damagableObject = collision.gameObject.GetComponent<IDamagable<int>>();
-            if (damagableObject != null)
+            NetworkPlayerHealth playerHit = collision.gameObject.GetComponent<NetworkPlayerHealth>();
+            if (playerHit != null)
             {
-                damagableObject.Damage(damage, gameObject);
+                playerHit.Damage(damage, owner);
             }
+
+//             IDamagable<int> damagableObject = collision.gameObject.GetComponent<IDamagable<int>>();
+//             if (damagableObject != null)
+//             {
+//                 damagableObject.Damage(damage, gameObject);
+//             }
         }
     }
 }

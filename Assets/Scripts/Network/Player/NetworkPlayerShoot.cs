@@ -22,12 +22,20 @@ public class NetworkPlayerShoot : NetworkBehaviour
 
     private void OnEnable()
     {
-        shotsLeft = shotsPerBurst;
-        isReloading = false;
-        canShoot = true;
+        Reset();
     }
 
     private void OnDisable()
+    {
+        canShoot = false;
+    }
+
+    public void Enable()
+    {
+        canShoot = true;
+    }
+
+    public void Disable()
     {
         canShoot = false;
     }
@@ -67,7 +75,8 @@ public class NetworkPlayerShoot : NetworkBehaviour
         GameObject bullet = NetworkGameManager.Instance.BulletPool.GetObject();
         bullet.transform.position = bulletSpawnPoint.position;
         bullet.transform.rotation = bulletSpawnPoint.rotation;
-        bullet.GetComponent<NetworkBullet>().SetVelocity(bulletSpawnPoint);
+        //bullet.GetComponent<NetworkBullet>().SetVelocity(bulletSpawnPoint);
+        bullet.GetComponent<NetworkBullet>().Launch(bulletSpawnPoint, this.GetComponent<NetworkPlayerController>());
 
         NetworkServer.Spawn(bullet, NetworkGameManager.Instance.BulletPool.assetId);
     }
@@ -83,5 +92,12 @@ public class NetworkPlayerShoot : NetworkBehaviour
             yield return null;
         }
         isReloading = false;
+    }
+
+    public void Reset()
+    {
+        shotsLeft = shotsPerBurst;
+        isReloading = false;
+        canShoot = true;
     }
 }
