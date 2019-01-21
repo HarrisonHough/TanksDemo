@@ -66,6 +66,8 @@ public class NetworkGameManager : NetworkBehaviour
     private SpawnPoint[] spawnPoints;
     [SerializeField]
     private LeaderboardUI leaderboardUI;
+    [SerializeField]
+    public NetworkUIControl UIControl;
 
     [Server]
     void Start()

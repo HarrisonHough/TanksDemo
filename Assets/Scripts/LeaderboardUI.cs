@@ -10,8 +10,10 @@ public class LeaderboardUI : MonoBehaviour {
     [SerializeField]
     private Text[] playerScoreText;
 
-	// Use this for initialization
-	void Start () {
+
+
+    // Use this for initialization
+    void Start () {
         ClearScoreBoard();
 
     }

@@ -11,6 +11,7 @@ public class NetworkPlayerController : NetworkBehaviour
     private FixedJoystick moveJoystick;
     [SerializeField]
     private FixedJoystick aimJoystick;
+    private Vector2 lastAimJoystickVector = Vector2.zero;
 
     protected NetworkPlayerHealth health;
     protected NetworkPlayerMotor motor;
@@ -30,6 +31,8 @@ public class NetworkPlayerController : NetworkBehaviour
     public int Score = 0;
 
     private float respawnTime = 5f;
+
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -37,6 +40,9 @@ public class NetworkPlayerController : NetworkBehaviour
         motor = GetComponent<NetworkPlayerMotor>();
         setup = GetComponent<NetworkPlayerSetup>();
         shoot = GetComponent<NetworkPlayerShoot>();
+
+        moveJoystick = NetworkGameManager.Instance.UIControl.MoveJoystick;
+        aimJoystick = NetworkGameManager.Instance.UIControl.AimJoystick;
 
         if (!isLocalPlayer)
         {
@@ -64,13 +70,29 @@ public class NetworkPlayerController : NetworkBehaviour
         motor.MovePlayer(inputVector * Time.deltaTime);
     }
 
+    //only use touch joystick on android
+#if UNITY_ANDROID
     private void UpdateTurretRotation()
     {
-        Vector3 turretDirection = Utility.GetWorldPointFromScreenPoint(Input.mousePosition, motor.TurretTransform.position.y) - motor.TurretTransform.position;
-
-        //Debug.Log("turret Direction" + turretDirection + "\n Mouse Position = " + Input.mousePosition);
-        motor.RotateTurret(turretDirection);
+        motor.RotateTurret(new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical));
     }
+
+    private Vector3 GetInputVector()
+    {
+        return new Vector3(moveJoystick.Horizontal, 0, moveJoystick.Vertical).normalized;
+    }
+
+    private void ShootCheck()
+    {
+        if (aimJoystick.Direction == Vector2.zero && lastAimJoystickVector != Vector2.zero)
+        {
+            //released (shoot
+            shoot.Shoot();
+        }
+        lastAimJoystickVector = aimJoystick.Direction;
+    }
+
+#endif
 
     private void UpdateChassisRotation()
     {
@@ -81,14 +103,18 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
-    private void Move()
+#if UNITY_STANDALONE_WIN
+
+    private void UpdateTurretRotation()
     {
-        motor.MovePlayer(inputVector);
+        Vector3 turretDirection = Utility.GetWorldPointFromScreenPoint(Input.mousePosition, motor.TurretTransform.position.y) - motor.TurretTransform.position;
+
+        //Debug.Log("turret Direction" + turretDirection + "\n Mouse Position = " + Input.mousePosition);
+        motor.RotateTurret(turretDirection);
     }
 
-
-
-    private Vector3 GetInputVector()
+   
+     private Vector3 GetInputVector()
     {
         return new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
     }
@@ -102,8 +128,25 @@ public class NetworkPlayerController : NetworkBehaviour
             }
     }
 
+
+#endif
+    private void Move()
+    {
+        motor.MovePlayer(inputVector);
+    }
+   
     public void Reset()
     {
+        if (moveJoystick == null)
+        {
+            moveJoystick = NetworkGameManager.Instance.UIControl.MoveJoystick;
+           
+        }
+        if (aimJoystick == null)
+        {
+           
+            aimJoystick = NetworkGameManager.Instance.UIControl.AimJoystick;
+        }
         health.ResetPlayerHealth();
         motor.Reset();
         shoot.Reset();
