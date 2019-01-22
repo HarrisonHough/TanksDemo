@@ -70,9 +70,15 @@ public class NetworkPlayerMotor : NetworkBehaviour
         FaceDirection(turretTransform, direction, turretRotateSpeed);
     }
 
-    public void Reset()
+    public void StopMovement()
     {
         rigidbody.velocity = Vector3.zero;
+        canMove = false;
+    }
+
+    public void Reset()
+    {
+        StopMovement();
         canMove = true;
     }
 }

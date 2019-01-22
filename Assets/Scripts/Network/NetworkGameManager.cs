@@ -47,8 +47,6 @@ public class NetworkGameManager : NetworkBehaviour
     public static List<NetworkPlayerController> AllPlayers = new List<NetworkPlayerController>();
 
     public NetworkLobbyManager networkLobbyManager;
-    [SerializeField]
-    private UIControl uiControl;
 
     [SyncVar]
     public GameState Gamestate = GameState.InGame;
@@ -107,7 +105,7 @@ public class NetworkGameManager : NetworkBehaviour
     {
 
         //show gameOver UI
-        uiControl.ToggleGameOverPanel(true);
+        //UIControl.ToggleGameOverPanel(true);
         Gamestate = GameState.GameOver;
 
     }
@@ -186,6 +184,9 @@ public class NetworkGameManager : NetworkBehaviour
         {
             yield return null;
         }
+        yield return new WaitForSeconds(0.1f);
+        //UIControl.SetMessageText("Get Ready");
+        RpcShowMessage("Get Ready");
         yield return new WaitForSeconds(2);
         yield return StartCoroutine(StartGameRoutine());
         yield return StartCoroutine(PlayGameRoutine());
@@ -206,6 +207,8 @@ public class NetworkGameManager : NetworkBehaviour
 
     IEnumerator StartGameRoutine()
     {
+        //UIControl.SetMessageText("FIGHT!", 2f);
+        RpcShowMessageThenRemove("FIGHT!", 2f);
         Reset();
         RpcStartGame();
         UpdateScoreboard();
@@ -237,31 +240,34 @@ public class NetworkGameManager : NetworkBehaviour
 
     IEnumerator EndGameRoutine()
     {
+        //UIControl.SetMessageText(winningPlayer.GetComponent<NetworkPlayerSetup>().PlayerName + " Wins!");
+        RpcShowMessage(winningPlayer.GetComponent<NetworkPlayerSetup>().PlayerName + " Wins!");
         RpcEndGame();
         //update winner message
         yield return new WaitForSeconds(3f);
-
+        /*UIControl.SetMessageText("Loading Lobby");*/
+        RpcShowMessage("Loading Lobby");
+        yield return new WaitForSeconds(1f);
         Reset();
         LobbyManager.s_Singleton._playerNumber = 0;
         LobbyManager.s_Singleton.SendReturnToLobby();
     }
 
     [ClientRpc]
+    void RpcShowMessage(string text)
+    {
+        UIControl.SetMessageText(text);
+    }
+    [ClientRpc]
+    void RpcShowMessageThenRemove(string text, float delay)
+    {
+        UIControl.SetMessageText(text, delay);
+    }
+
+    [ClientRpc]
     void RpcEndGame()
     {
         DisablePlayerControls();
-
-    }
-
-    IEnumerator EndGame()
-    {
-        RpcEndGame();
-        //RpcUpdateMessage("GAME OVER \n " + Winner.pSetup.name + " wins!");
-        yield return new WaitForSeconds(3f);
-        Reset();
-
-        LobbyManager.s_Singleton._playerNumber = 0;
-        LobbyManager.s_Singleton.SendReturnToLobby();
 
     }
 

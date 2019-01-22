@@ -190,6 +190,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     IEnumerator RespawnRoutine()
     {
+        motor.Reset();
         isDead = true;
         OnDeathEvent.Invoke();
         float timeToRespawn = Time.time + respawnTime;

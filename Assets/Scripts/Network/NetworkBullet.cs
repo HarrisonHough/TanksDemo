@@ -45,6 +45,7 @@ public class NetworkBullet : NetworkBehaviour
     private void OnDisable()
     {
         rigidbody.velocity = Vector3.zero;
+        bounces = 0;
     }
 
     private void Explode()

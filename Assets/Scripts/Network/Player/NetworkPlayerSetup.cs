@@ -66,12 +66,12 @@ public class NetworkPlayerSetup : NetworkBehaviour
 
     void UpdateName(string name)
     {
-        if (playerNameText != null)
+        if (playerNameText == null)
         {
             //TODO create coroutine to disable player name after a while?
             playerNameText.enabled = false;
-            //playerNameText.enabled = true;
-            //playerNameText.text = name;
+            return;
         }
+        playerNameText.text = name;
     }
 }
