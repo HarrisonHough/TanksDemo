@@ -6,8 +6,8 @@ public class SpawnPoint : MonoBehaviour {
 
 
     [SerializeField]
-    private float detectionRadius = 1f;
-    public LayerMask layerMask;
+    private float _detectionRadius = 1f;
+    public LayerMask LayerMask;
 
 	// Use this for initialization
 	void Start () {
@@ -16,7 +16,7 @@ public class SpawnPoint : MonoBehaviour {
 
     public bool CheckIsOccupied()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionRadius, layerMask);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, _detectionRadius, LayerMask);
         if (hitColliders.Length > 0)
         {
             return true;

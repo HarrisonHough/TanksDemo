@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class NetworkSpawnPoint : MonoBehaviour
 {
-    public bool m_isOccupied;
+    public bool IsOccupied { get; set; }
 
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            m_isOccupied = true;
+            IsOccupied = true;
         }
     }
 
@@ -20,7 +20,7 @@ public class NetworkSpawnPoint : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            m_isOccupied = true;
+            IsOccupied = true;
         }
     }
 
@@ -29,7 +29,7 @@ public class NetworkSpawnPoint : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            m_isOccupied = false;
+            IsOccupied = false;
         }
     }
 

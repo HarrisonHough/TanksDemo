@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 public class NetworkPlayerHealth : NetworkBehaviour
 {
     [SyncVar(hook = "UpdateHealthBar")]
-    private int currentHealth;
+    private int _currentHealth;
     [SerializeField]
-    private int maxHealth = 3;
-    public int MaxHealth { get { return maxHealth; } }
+    private int _maxHealth = 3;
+    public int MaxHealth { get { return _maxHealth; } }
 
     [SyncVar]
     public bool isDead = false;
@@ -35,8 +35,8 @@ public class NetworkPlayerHealth : NetworkBehaviour
 
     public void ResetPlayerHealth()
     {
-        currentHealth = maxHealth;
-        healthSlider.maxValue = currentHealth;
+        _currentHealth = _maxHealth;
+        healthSlider.maxValue = _currentHealth;
         UpdateHealthBar((int)healthSlider.maxValue);
 
         isDead = false;
@@ -52,14 +52,14 @@ public class NetworkPlayerHealth : NetworkBehaviour
         if (Time.time - lastDamageTime < 0.1f)
             return;
         lastDamageTime = Time.time;
-        currentHealth -= damage;
+        _currentHealth -= damage;
         Debug.Log("Damage Taken By AI");
         if(attacker != playerController)
             lastAttacker = attacker;
         //TODO fix update health bar
-        UpdateHealthBar(currentHealth);
+        UpdateHealthBar(_currentHealth);
 
-        if (currentHealth <= 0 && !isDead)
+        if (_currentHealth <= 0 && !isDead)
         {
             //add to attackers score
             if (lastAttacker != null)
@@ -76,32 +76,6 @@ public class NetworkPlayerHealth : NetworkBehaviour
             playerController.Death();
         }
     }
-
-//     public void Damage(int damage, GameObject enemyObject)
-//     {
-//         if (!isServer)
-//         {
-//             return;
-//         }
-// 
-//         if (Time.time - lastDamageTime < 0.1f)
-//             return;
-//         lastDamageTime = Time.time;
-//         currentHealth -= damage;
-//         Debug.Log("Damage Taken By AI");
-// 
-//         //lastAttacker = enemyObject;
-// 
-//         //TODO fix update health bar
-//         UpdateHealthBar(currentHealth);
-// 
-//         if (currentHealth <= 0 && !isDead)
-//         {
-//             //GameManager.Instance.UpdateScoreboard();
-//             isDead = true;
-//             RpcDie();
-//         }
-//     }
 
     private void UpdateHealthBar(int health)
     {

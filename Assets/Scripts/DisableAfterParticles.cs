@@ -5,7 +5,7 @@ using UnityEngine;
 public class DisableAfterParticles : MonoBehaviour
 {
     [SerializeField]
-    private ParticleSystem particles;
+    private ParticleSystem _particles;
 
     private void OnEnable()
     {
@@ -19,7 +19,7 @@ public class DisableAfterParticles : MonoBehaviour
 
     IEnumerator DisableAfterParticlesRoutine()
     {
-        float timeToDisable = Time.time + particles.main.duration;
+        float timeToDisable = Time.time + _particles.main.duration;
 
         while (Time.time < timeToDisable)
         {

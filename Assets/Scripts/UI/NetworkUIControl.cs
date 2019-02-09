@@ -7,15 +7,15 @@ public class NetworkUIControl : MonoBehaviour
 {
 
     [SerializeField]
-    private GameObject joysticks;
+    private GameObject _joysticks;
     [SerializeField]
-    private FixedJoystick moveJoystick;
-    public FixedJoystick MoveJoystick { get { return moveJoystick; } }
+    private FixedJoystick _moveJoystick;
+    public FixedJoystick MoveJoystick { get { return _moveJoystick; } }
     [SerializeField]
-    private FixedJoystick aimJoystick;
-    public FixedJoystick AimJoystick { get { return aimJoystick; } }
+    private FixedJoystick _aimJoystick;
+    public FixedJoystick AimJoystick { get { return _aimJoystick; } }
     [SerializeField]
-    private Text messageText;
+    private Text _messageText;
 
     private void Awake()
     {
@@ -27,7 +27,7 @@ public class NetworkUIControl : MonoBehaviour
         
         //only use touch joystick on android
 #if UNITY_ANDROID
-        joysticks.SetActive(true);
+        _joysticks.SetActive(true);
 #else
         joysticks.SetActive(false);
 #endif
@@ -36,19 +36,19 @@ public class NetworkUIControl : MonoBehaviour
 
     public void SetMessageText(string text)
     {
-        messageText.text = text;
+        _messageText.text = text;
     }
 
     public void SetMessageText(string text, float disableTime)
     {
         StopAllCoroutines();
-        messageText.text = text;
+        _messageText.text = text;
         StartCoroutine(DelayClearMessage(disableTime));
     }
 
     public void ClearMessageText()
     {
-        messageText.text = "";
+        _messageText.text = "";
     }
     IEnumerator DelayClearMessage(float duration)
     {

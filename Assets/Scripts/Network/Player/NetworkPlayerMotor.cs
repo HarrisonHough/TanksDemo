@@ -9,42 +9,42 @@ public class NetworkPlayerMotor : NetworkBehaviour
 
 
     [SerializeField]
-    private Transform baseTransform;
-    public Transform BaseTransform { get { return baseTransform; } }
+    private Transform _baseTransform;
+    public Transform BaseTransform { get { return _baseTransform; } }
     [SerializeField]
-    private Transform turretTransform;
-    public Transform TurretTransform { get { return turretTransform; } }
+    private Transform _turretTransform;
+    public Transform TurretTransform { get { return _turretTransform; } }
     [SerializeField]
-    private float moveSpeed = 100f;
+    private float _moveSpeed = 100f;
     [SerializeField]
-    private float baseRotateSpeed = 1f;
+    private float _baseRotateSpeed = 1f;
     [SerializeField]
-    private float turretRotateSpeed = 3f;
+    private float _turretRotateSpeed = 3f;
 
-    private Rigidbody rigidbody;
+    private Rigidbody _rigidbody;
 
-    private bool canMove = false;
+    private bool _canMove = false;
 
     // Use this for initialization
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
 
     }
 
     public void Enable()
     {
-        canMove = true;
+        _canMove = true;
     }
     public void Disable()
     {
-        canMove = false;
+        _canMove = false;
     }
 
     public void MovePlayer(Vector3 moveVector)
     {
-        if (canMove) {
-            rigidbody.velocity = moveVector * moveSpeed;
+        if (_canMove) {
+            _rigidbody.velocity = moveVector * _moveSpeed;
         }
     }
 
@@ -61,24 +61,24 @@ public class NetworkPlayerMotor : NetworkBehaviour
 
     public void RotateChassis(Vector3 direction)
     {
-        FaceDirection(baseTransform, direction, baseRotateSpeed);
+        FaceDirection(_baseTransform, direction, _baseRotateSpeed);
     }
 
 
     public void RotateTurret(Vector3 direction)
     {
-        FaceDirection(turretTransform, direction, turretRotateSpeed);
+        FaceDirection(_turretTransform, direction, _turretRotateSpeed);
     }
 
     public void StopMovement()
     {
-        rigidbody.velocity = Vector3.zero;
-        canMove = false;
+        _rigidbody.velocity = Vector3.zero;
+        _canMove = false;
     }
 
     public void Reset()
     {
         StopMovement();
-        canMove = true;
+        _canMove = true;
     }
 }

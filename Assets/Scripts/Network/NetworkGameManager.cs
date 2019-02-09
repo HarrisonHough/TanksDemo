@@ -8,7 +8,7 @@ using Prototype.NetworkLobby;
 public class NetworkGameManager : NetworkBehaviour
 {
     #region Singleton 
-    private static NetworkGameManager instance;
+    private static NetworkGameManager _instance;
     [SerializeField]
     private bool dontDestroyOnLoad = false;
 
@@ -18,7 +18,7 @@ public class NetworkGameManager : NetworkBehaviour
         get
         {
             //if instance exists return instance
-            return instance;
+            return _instance;
         }
     }
 
@@ -27,9 +27,9 @@ public class NetworkGameManager : NetworkBehaviour
     /// </summary>
     public virtual void Awake()
     {
-        if (instance == null)
+        if (_instance == null)
         {
-            instance = this as NetworkGameManager;
+            _instance = this as NetworkGameManager;
             if (dontDestroyOnLoad)
             {
                 DontDestroyOnLoad(this.gameObject);

@@ -5,53 +5,53 @@ using UnityEngine.Networking;
 
 public class NetworkBullet : NetworkBehaviour
 {
-    private Rigidbody rigidbody;
+    private Rigidbody _rigidbody;
     [SerializeField]
-    private Collider collider;
+    private Collider _collider;
     [SerializeField]
-    private int maxBounces = 3;
-    private int bounces = 0;
+    private int _maxBounces = 3;
+    private int _bounces = 0;
 
     [SerializeField]
-    private int damage = 1;
+    private int _damage = 1;
     [SerializeField]
-    private float speed = 100;
-    public float Speed { get { return speed; } }
+    private float _speed = 100;
+    public float Speed { get { return _speed; } }
 
-    NetworkPlayerController owner;
+    private NetworkPlayerController _owner;
 
     // Start is called before the first frame update
     void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        collider = GetComponent<Collider>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
     }
 
     private void OnEnable()
     {
-        rigidbody.velocity = speed * transform.forward;
+        _rigidbody.velocity = _speed * transform.forward;
     }
 
     public void SetVelocity(Transform spawnPoint)
     {
-        rigidbody.velocity = speed * spawnPoint.transform.forward;
+        _rigidbody.velocity = _speed * spawnPoint.transform.forward;
     }
     public void Launch(Transform spawnPoint, NetworkPlayerController owner)
     {
-        this.owner = owner;
-        rigidbody.velocity = speed * spawnPoint.transform.forward;
+        this._owner = owner;
+        _rigidbody.velocity = _speed * spawnPoint.transform.forward;
     }
 
     private void OnDisable()
     {
-        rigidbody.velocity = Vector3.zero;
-        bounces = 0;
+        _rigidbody.velocity = Vector3.zero;
+        _bounces = 0;
     }
 
     private void Explode()
     {
-        rigidbody.velocity = Vector3.zero;
-        rigidbody.Sleep();
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.Sleep();
         NetworkGameManager.Instance.SpawnHitFX(transform.position);
 // 
 //         GameObject hitFX = NetworkGameManager.Instance.HitFXPool.GetObject();
@@ -66,9 +66,9 @@ public class NetworkBullet : NetworkBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (rigidbody.velocity != Vector3.zero)
+        if (_rigidbody.velocity != Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(rigidbody.velocity);
+            transform.rotation = Quaternion.LookRotation(_rigidbody.velocity);
         }
     }
 
@@ -76,12 +76,12 @@ public class NetworkBullet : NetworkBehaviour
     {
         CheckCollisions(collision);
 
-        if (bounces > +maxBounces)
+        if (_bounces > +_maxBounces)
         {
             Explode();
         }
 
-        bounces++;
+        _bounces++;
     }
 
     private void CheckCollisions(Collision collision)
@@ -94,7 +94,7 @@ public class NetworkBullet : NetworkBehaviour
             NetworkPlayerHealth playerHit = collision.gameObject.GetComponent<NetworkPlayerHealth>();
             if (playerHit != null)
             {
-                playerHit.Damage(damage, owner);
+                playerHit.Damage(_damage, _owner);
             }
 
 //             IDamagable<int> damagableObject = collision.gameObject.GetComponent<IDamagable<int>>();

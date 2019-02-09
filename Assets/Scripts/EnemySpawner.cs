@@ -5,17 +5,17 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
-    private Pool EnemyPool;
+    private Pool _enemyPool;
 
     [SerializeField]
-    private float spawnInterval = 10f;
+    private float _spawnInterval = 10f;
 
     [SerializeField]
-    private Transform[] spawnPoints;
+    private Transform[] _spawnPoints;
 
-    private float lastSpawnTime;
+    private float _lastSpawnTime;
 
-    private bool isActive;
+    private bool _isActive;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +25,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void StopSpawning()
     {
-        isActive = false;
+        _isActive = false;
         StopAllCoroutines();
     }
 
@@ -36,12 +36,12 @@ public class EnemySpawner : MonoBehaviour
 
     private Transform GetRandomSpawnPoint()
     {
-        return (spawnPoints[ Random.Range(0,spawnPoints.Length)]);
+        return (_spawnPoints[ Random.Range(0,_spawnPoints.Length)]);
     }
 
     private void SpawnEnemy()
     {
-        GameObject newEnemy = EnemyPool.GetObject();
+        GameObject newEnemy = _enemyPool.GetObject();
         Transform spawnPoint = GetRandomSpawnPoint();
         newEnemy.transform.position = spawnPoint.position;
         newEnemy.transform.rotation = spawnPoint.rotation;
@@ -55,15 +55,15 @@ public class EnemySpawner : MonoBehaviour
         yield return new WaitForSeconds(1);
         SpawnEnemy();
 
-        if (!isActive)
-            isActive = true;
-        while (isActive)
+        if (!_isActive)
+            _isActive = true;
+        while (_isActive)
         {
-            if (Time.time - lastSpawnTime > spawnInterval 
+            if (Time.time - _lastSpawnTime > _spawnInterval 
                 && GameManager.Instance.ActiveAITanks.Count < 4 
                 && GameManager.Instance.Gamestate == GameState.InGame)
             {
-                lastSpawnTime = Time.time;
+                _lastSpawnTime = Time.time;
                 SpawnEnemy();
             }
             yield return null;

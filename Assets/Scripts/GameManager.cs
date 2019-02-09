@@ -8,38 +8,38 @@ public class GameManager : GenericSingleton<GameManager>
 {
 
     [SerializeField]
-    private Pool hitFXPool;
-    public Pool HitFXPool { get { return hitFXPool; } }
+    private Pool _hitFXPool;
+    public Pool HitFXPool { get { return _hitFXPool; } }
     [SerializeField]
-    private Pool spawnFXPool;
-    public Pool SpawnFXPool { get { return SpawnFXPool; } }
+    private Pool _spawnFXPool;
+    public Pool SpawnFXPool { get { return _spawnFXPool; } }
     [SerializeField]
-    private Pool explodeFXPool;
-    public Pool ExplodeFXPool { get { return explodeFXPool; } }
+    private Pool _explodeFXPool;
+    public Pool ExplodeFXPool { get { return _explodeFXPool; } }
     [SerializeField]
-    private Pool bulletPool;
-    public Pool BulletPool { get { return bulletPool; } }
+    private Pool _bulletPool;
+    public Pool BulletPool { get { return _bulletPool; } }
     [SerializeField]
-    private GameObject player;
-    public GameObject Player { get { return player; } }
+    private GameObject _player;
+    public GameObject Player { get { return _player; } }
     [SerializeField]
-    private EnemySpawner spawner;
+    private EnemySpawner _spawner;
 
-    private TankController playerTank;
+    private TankController _playerTank;
 
     [SerializeField]
-    private UIControl uiControl;
+    private UIControl _uiControl;
 
-    private int enemyCount;
+    private int _enemyCount;
     public int EnemyCount
     {
-        get { return enemyCount; }
+        get { return _enemyCount; }
 
         set {
-            enemyCount = value;
+            _enemyCount = value;
 
-            if (enemyCount < 0)
-                enemyCount = 0;
+            if (_enemyCount < 0)
+                _enemyCount = 0;
         }
     }
 
@@ -53,7 +53,7 @@ public class GameManager : GenericSingleton<GameManager>
     {
         get { return tanksDestroyed; }
         set { tanksDestroyed = value;
-            uiControl.UpdateScoreText(GameManager.Instance.tanksDestroyed);
+            _uiControl.UpdateScoreText(GameManager.Instance.tanksDestroyed);
         } }
 
     // Start is called before the first frame update
@@ -68,11 +68,11 @@ public class GameManager : GenericSingleton<GameManager>
     public void GameOver()
     {
         //update ui panel score
-        uiControl.UpdateScoreText(tanksDestroyed);
+        _uiControl.UpdateScoreText(tanksDestroyed);
 
-        spawner.StopSpawning();
+        _spawner.StopSpawning();
         //show gameOver UI
-        uiControl.ToggleGameOverPanel(true);
+        _uiControl.ToggleGameOverPanel(true);
         Gamestate = GameState.GameOver;
 
     }
@@ -87,13 +87,13 @@ public class GameManager : GenericSingleton<GameManager>
         //reset
         tanksDestroyed = 0;
 
-        player.transform.position = Vector3.zero;
-        player.SetActive(true);
+        _player.transform.position = Vector3.zero;
+        _player.SetActive(true);
         Gamestate = GameState.InGame;
         //hide game over panel
         //uiControl.UpdateScoreText(tanksDestroyed);
-        uiControl.ToggleInGameUI(true);
-        spawner.RestartSpawnLoop();
+        _uiControl.ToggleInGameUI(true);
+        _spawner.RestartSpawnLoop();
     }
 
     public void BackToHomeScene()

@@ -7,9 +7,9 @@ using UnityEngine.EventSystems;
 public class TankController : BaseController
 {
     [SerializeField]
-    private FixedJoystick moveJoystick;
+    private FixedJoystick _moveJoystick;
     [SerializeField]
-    private FixedJoystick aimJoystick;
+    private FixedJoystick _aimJoystick;
 
     //private bool shoot = false;
 
@@ -25,22 +25,22 @@ public class TankController : BaseController
 #if UNITY_ANDROID
     protected override void UpdateTurretRotation()
     {
-        motor.RotateTurret(new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical));
+        motor.RotateTurret(new Vector3(_aimJoystick.Horizontal, 0, _aimJoystick.Vertical));
     }
 
     protected override Vector3 GetInputVector()
     {
-    return new Vector3(moveJoystick.Horizontal, 0, moveJoystick.Vertical).normalized;
+    return new Vector3(_moveJoystick.Horizontal, 0, _moveJoystick.Vertical).normalized;
     }
 
     protected override void ShootCheck()
     {
-        if (aimJoystick.Direction == Vector2.zero && lastAimJoystickVector != Vector2.zero)
+        if (_aimJoystick.Direction == Vector2.zero && lastAimJoystickVector != Vector2.zero)
         {
             //released (shoot
             shoot.Shoot();
         }
-        lastAimJoystickVector = aimJoystick.Direction;
+        lastAimJoystickVector = _aimJoystick.Direction;
     }
 #endif
 

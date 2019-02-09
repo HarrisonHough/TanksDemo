@@ -6,36 +6,36 @@ public class TankMotor : MonoBehaviour
 {
 
     [SerializeField]
-    private Transform baseTransform;
-    public Transform BaseTransform { get { return baseTransform; } }
+    private Transform _baseTransform;
+    public Transform BaseTransform { get { return _baseTransform; } }
     [SerializeField]
-    private Transform turretTransform;
-    public Transform TurretTransform { get { return turretTransform; } }
+    private Transform _turretTransform;
+    public Transform TurretTransform { get { return _turretTransform; } }
     [SerializeField]
-    private float moveSpeed = 100f;
+    private float _moveSpeed = 100f;
     [SerializeField]
-    private float baseRotateSpeed = 1f;
+    private float _baseRotateSpeed = 1f;
     [SerializeField]
-    private float turretRotateSpeed = 3f;
+    private float _turretRotateSpeed = 3f;
     [SerializeField]
-    private Rigidbody rigidbody;
+    private Rigidbody _rigidbody;
 
     // Use this for initialization
     void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     public void MoveTank(Vector3 direction)
     {
         if (GameManager.Instance.Gamestate != GameState.InGame)
         {
-            rigidbody.velocity = Vector3.zero;
+            _rigidbody.velocity = Vector3.zero;
             return;
         }
-        Vector3 moveDirection = direction * moveSpeed * Time.deltaTime;
+        Vector3 moveDirection = direction * _moveSpeed * Time.deltaTime;
 
-        rigidbody.velocity = moveDirection;
+        _rigidbody.velocity = moveDirection;
         //Not using
         //rigidbody.MovePosition(rigidbody.position + direction * Time.deltaTime);
     }
@@ -53,12 +53,12 @@ public class TankMotor : MonoBehaviour
 
     public void RotateChassis(Vector3 dir)
     {
-        FaceDirection(baseTransform, dir, baseRotateSpeed);
+        FaceDirection(_baseTransform, dir, _baseRotateSpeed);
     }
 
 
     public void RotateTurret(Vector3 dir)
     {
-        FaceDirection(turretTransform, dir, turretRotateSpeed);
+        FaceDirection(_turretTransform, dir, _turretRotateSpeed);
     }
 }

@@ -8,10 +8,10 @@ public class NetworkPlayerController : NetworkBehaviour
 {
 
     [SerializeField]
-    private FixedJoystick moveJoystick;
+    private FixedJoystick _moveJoystick;
     [SerializeField]
-    private FixedJoystick aimJoystick;
-    private Vector2 lastAimJoystickVector = Vector2.zero;
+    private FixedJoystick _aimJoystick;
+    private Vector2 _lastAimJoystickVector = Vector2.zero;
 
     protected NetworkPlayerHealth health;
     protected NetworkPlayerMotor motor;
@@ -21,16 +21,16 @@ public class NetworkPlayerController : NetworkBehaviour
     protected Vector3 inputVector;
 
     [SerializeField]
-    private Behaviour[] nonLocalcomponentsToDisable;
+    private Behaviour[] _nonLocalcomponentsToDisable;
 
     public UnityEvent OnDeathEvent;
     public UnityEvent OnRespawnEvent;
 
-    private bool isDead = false;
+    private bool _isDead = false;
     [SyncVar]
     public int Score = 0;
 
-    private float respawnTime = 5f;
+    private float _respawnTime = 5f;
 
 
     // Start is called before the first frame update
@@ -41,8 +41,8 @@ public class NetworkPlayerController : NetworkBehaviour
         setup = GetComponent<NetworkPlayerSetup>();
         shoot = GetComponent<NetworkPlayerShoot>();
 
-        moveJoystick = NetworkGameManager.Instance.UIControl.MoveJoystick;
-        aimJoystick = NetworkGameManager.Instance.UIControl.AimJoystick;
+        _moveJoystick = NetworkGameManager.Instance.UIControl.MoveJoystick;
+        _aimJoystick = NetworkGameManager.Instance.UIControl.AimJoystick;
 
         if (!isLocalPlayer)
         {
@@ -52,7 +52,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void Update()
     {
-        if (!isLocalPlayer || isDead)
+        if (!isLocalPlayer || _isDead)
             return;
 
         inputVector = GetInputVector();
@@ -64,7 +64,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (NetworkGameManager.Instance.Gamestate != GameState.InGame || !isLocalPlayer || isDead)
+        if (NetworkGameManager.Instance.Gamestate != GameState.InGame || !isLocalPlayer || _isDead)
             return;
 
         motor.MovePlayer(inputVector * Time.deltaTime);
@@ -74,22 +74,22 @@ public class NetworkPlayerController : NetworkBehaviour
 #if UNITY_ANDROID
     private void UpdateTurretRotation()
     {
-        motor.RotateTurret(new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical));
+        motor.RotateTurret(new Vector3(_aimJoystick.Horizontal, 0, _aimJoystick.Vertical));
     }
 
     private Vector3 GetInputVector()
     {
-        return new Vector3(moveJoystick.Horizontal, 0, moveJoystick.Vertical).normalized;
+        return new Vector3(_moveJoystick.Horizontal, 0, _moveJoystick.Vertical).normalized;
     }
 
     private void ShootCheck()
     {
-        if (aimJoystick.Direction == Vector2.zero && lastAimJoystickVector != Vector2.zero)
+        if (_aimJoystick.Direction == Vector2.zero && _lastAimJoystickVector != Vector2.zero)
         {
             //released (shoot
             shoot.Shoot();
         }
-        lastAimJoystickVector = aimJoystick.Direction;
+        _lastAimJoystickVector = _aimJoystick.Direction;
     }
 
 #endif
@@ -137,15 +137,15 @@ public class NetworkPlayerController : NetworkBehaviour
    
     public void Reset()
     {
-        if (moveJoystick == null)
+        if (_moveJoystick == null)
         {
-            moveJoystick = NetworkGameManager.Instance.UIControl.MoveJoystick;
+            _moveJoystick = NetworkGameManager.Instance.UIControl.MoveJoystick;
            
         }
-        if (aimJoystick == null)
+        if (_aimJoystick == null)
         {
            
-            aimJoystick = NetworkGameManager.Instance.UIControl.AimJoystick;
+            _aimJoystick = NetworkGameManager.Instance.UIControl.AimJoystick;
         }
         health.ResetPlayerHealth();
         motor.Reset();
@@ -164,14 +164,14 @@ public class NetworkPlayerController : NetworkBehaviour
         
         OnRespawnEvent.Invoke();
         Reset();
-        isDead = false;
+        _isDead = false;
         NetworkGameManager.Instance.SpawnFX(transform.position);
 
     }
 
     public void Death()
     {
-        if (!isDead)
+        if (!_isDead)
         {
             StartCoroutine(RespawnRoutine());
         }
@@ -182,7 +182,7 @@ public class NetworkPlayerController : NetworkBehaviour
     private void DisableNonLocalPlayerComponents()
     {
         //hide components
-        foreach (Behaviour component in nonLocalcomponentsToDisable)
+        foreach (Behaviour component in _nonLocalcomponentsToDisable)
         {
             component.enabled = false;
         }
@@ -191,9 +191,9 @@ public class NetworkPlayerController : NetworkBehaviour
     IEnumerator RespawnRoutine()
     {
         motor.Reset();
-        isDead = true;
+        _isDead = true;
         OnDeathEvent.Invoke();
-        float timeToRespawn = Time.time + respawnTime;
+        float timeToRespawn = Time.time + _respawnTime;
         while (Time.time < timeToRespawn)
         {
             yield return null;

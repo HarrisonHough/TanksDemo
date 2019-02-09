@@ -7,20 +7,20 @@ using UnityEngine.UI;
 public class AITankController : BaseController
 {
     [SerializeField]
-    private NavMeshAgent agent;
+    private NavMeshAgent _agent;
 
     [SerializeField]
-    private float attackRange = 20f;
+    private float _attackRange = 20f;
     [SerializeField]
-    private float attackInterval = 0.5f;
+    private float _attackInterval = 0.5f;
 
-    private float nextTimeCanAttack = 0;
+    private float _nextTimeCanAttack = 0;
 
     // Start is called before the first frame update
     protected override void Start()
     {
         base.Start();
-        agent = GetComponent<NavMeshAgent>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     protected override void Update()
@@ -30,14 +30,14 @@ public class AITankController : BaseController
 
         if (GameManager.Instance.Gamestate != GameState.InGame)
         {
-            agent.isStopped = true;
+            _agent.isStopped = true;
             return;
         }
         else
-            agent.isStopped = false;
+            _agent.isStopped = false;
 
 
-        agent.SetDestination(GameManager.Instance.Player.transform.position);
+        _agent.SetDestination(GameManager.Instance.Player.transform.position);
         UpdateChassisRotation();
         UpdateTurretRotation();
         ShootCheck();
@@ -45,7 +45,7 @@ public class AITankController : BaseController
 
     protected override void FixedUpdate()
     { 
-        motor.MoveTank(agent.velocity);
+        motor.MoveTank(_agent.velocity);
     }
 
     protected override void UpdateTurretRotation()
@@ -56,9 +56,9 @@ public class AITankController : BaseController
 
     protected override void UpdateChassisRotation()
     {
-        if (agent.velocity.sqrMagnitude > 0.25f)
+        if (_agent.velocity.sqrMagnitude > 0.25f)
         {
-            motor.RotateChassis(agent.velocity);
+            motor.RotateChassis(_agent.velocity);
         }
     }
 
@@ -66,14 +66,14 @@ public class AITankController : BaseController
     {
         if (GameManager.Instance.Gamestate != GameState.InGame) { return; }
         //Debug.Log("Distance = " + (transform.position - GameManager.Instance.Player.transform.position).sqrMagnitude / 10 + "\n range = " + attackRange);
-        if ((transform.position - GameManager.Instance.Player.transform.position).sqrMagnitude / 10 < attackRange)
+        if ((transform.position - GameManager.Instance.Player.transform.position).sqrMagnitude / 10 < _attackRange)
         {
             //Debug.Log("AI is in Shooting Distance");
-            if (Time.time > nextTimeCanAttack)
+            if (Time.time > _nextTimeCanAttack)
             {
                 //Debug.Log("AI Shooting");
                 shoot.Shoot();
-                nextTimeCanAttack = Time.time + attackInterval;
+                _nextTimeCanAttack = Time.time + _attackInterval;
 
             }
         }

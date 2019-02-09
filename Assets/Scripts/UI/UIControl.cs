@@ -6,24 +6,24 @@ using UnityEngine.UI;
 public class UIControl : MonoBehaviour
 {
     [SerializeField]
-    private GameObject pausePanel;
+    private GameObject _pausePanel;
     [SerializeField]
-    private GameObject gameOverPanel;
+    private GameObject _gameOverPanel;
     [SerializeField]
-    private GameObject inGameUIPanel;
+    private GameObject _inGameUIPanel;
     [SerializeField]
-    private Text gameOverPanelScoreText;
+    private Text _gameOverPanelScoreText;
     [SerializeField]
-    private Text inGameScoreText;
+    private Text _inGameScoreText;
     [SerializeField]
-    private GameObject joysticks;
+    private GameObject _joysticks;
 
     private void Start()
     {
         ToggleInGameUI(true);
         //only use touch joystick on android
 #if UNITY_ANDROID
-        joysticks.SetActive(true);
+        _joysticks.SetActive(true);
 #else
         joysticks.SetActive(false);
 #endif
@@ -31,16 +31,16 @@ public class UIControl : MonoBehaviour
 
     private void ToggleAllPanels(bool enable)
     {
-        pausePanel.SetActive(enable);
-        gameOverPanel.SetActive(enable);
-        inGameUIPanel.SetActive(enable);
+        _pausePanel.SetActive(enable);
+        _gameOverPanel.SetActive(enable);
+        _inGameUIPanel.SetActive(enable);
     }
     public void TogglePausePanel(bool enable)
     {
         ToggleAllPanels(false);
-        pausePanel.SetActive(enable);
+        _pausePanel.SetActive(enable);
         
-        inGameUIPanel.SetActive(!enable);
+        _inGameUIPanel.SetActive(!enable);
 
     }
 
@@ -48,24 +48,24 @@ public class UIControl : MonoBehaviour
     {
         //SetGameOverPanelScore(GameManager.Instance.tanksDestroyed);
         ToggleAllPanels(false);
-        gameOverPanel.SetActive(enable);
+        _gameOverPanel.SetActive(enable);
     }
 
     public void ToggleInGameUI(bool enable)
     {
         ToggleAllPanels(false);
-        inGameUIPanel.SetActive(enable);
+        _inGameUIPanel.SetActive(enable);
     }
 
     public void UpdateScoreText(int score)
     {
-        gameOverPanelScoreText.text = "" + score;
-        inGameScoreText.text = "" + score;
+        _gameOverPanelScoreText.text = "" + score;
+        _inGameScoreText.text = "" + score;
     }
 
     public void ToggleJoystick(bool enable)
     {
-        joysticks.SetActive(true);
+        _joysticks.SetActive(true);
     }
 
     public void PauseButtonClick()

@@ -5,11 +5,11 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField]
-    private Transform target;
+    private Transform _target;
 
     [SerializeField]
-    private float yOffset;
-    private Vector3 targetPosition;
+    private float _yOffset;
+    private Vector3 _targetPosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,16 +18,16 @@ public class CameraFollow : MonoBehaviour
 
     public void SetTarget(GameObject newTarget)
     {
-        target = newTarget.transform;
+        _target = newTarget.transform;
     }
 
     private void LateUpdate()
     {
-        if (target != null)
+        if (_target != null)
         {
-            targetPosition = target.position;
-            targetPosition.y = yOffset;
-            transform.position = targetPosition;
+            _targetPosition = _target.position;
+            _targetPosition.y = _yOffset;
+            transform.position = _targetPosition;
         }
     }
 }

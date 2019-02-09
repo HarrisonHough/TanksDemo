@@ -4,41 +4,41 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private Rigidbody rigidbody;
+    private Rigidbody _rigidbody;
     [SerializeField]
-    private Collider collider;
+    private Collider _collider;
     [SerializeField]
-    private int maxBounces = 3;
-    private int bounces = 0;
+    private int _maxBounces = 3;
+    private int _bounces = 0;
    
     [SerializeField]
-    private int damage = 1;
+    private int _damage = 1;
     [SerializeField]
-    private float speed = 100;
-    public float Speed { get { return speed; } }
+    private float _speed = 100;
+    public float Speed { get { return _speed; } }
 
 
 
     // Start is called before the first frame update
     void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        collider = GetComponent<Collider>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
     }
 
     public void SetVelocity(Transform spawnPoint)
     {
-        rigidbody.velocity = speed * spawnPoint.transform.forward;
+        _rigidbody.velocity = _speed * spawnPoint.transform.forward;
     }
 
     private void OnDisable()
     {
-        rigidbody.velocity = Vector3.zero;
+        _rigidbody.velocity = Vector3.zero;
     }
     private void Explode()
     {
-        rigidbody.velocity = Vector3.zero;
-        rigidbody.Sleep();
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.Sleep();
 
         GameObject hitFX = GameManager.Instance.HitFXPool.GetObject();
         hitFX.transform.position = transform.position;
@@ -50,9 +50,9 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (rigidbody.velocity != Vector3.zero)
+        if (_rigidbody.velocity != Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(rigidbody.velocity);
+            transform.rotation = Quaternion.LookRotation(_rigidbody.velocity);
         }
     }
 
@@ -60,12 +60,12 @@ public class Bullet : MonoBehaviour
     {
         CheckCollisions(collision);
 
-        if (bounces > +maxBounces)
+        if (_bounces > +_maxBounces)
         {
             Explode();
         }
 
-        bounces++;
+        _bounces++;
     }
 
     private void CheckCollisions(Collision collision)
@@ -78,7 +78,7 @@ public class Bullet : MonoBehaviour
             IDamagable<int> damagableObject = collision.gameObject.GetComponent<IDamagable<int>>();
             if (damagableObject != null)
             {
-                damagableObject.Damage(damage, gameObject);
+                damagableObject.Damage(_damage, gameObject);
             }
         }
     }

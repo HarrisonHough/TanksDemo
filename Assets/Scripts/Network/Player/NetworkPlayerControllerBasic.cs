@@ -13,7 +13,7 @@ public class NetworkPlayerControllerBasic : NetworkBehaviour
 
     bool canMove = false;
 
-    Vector3 moveVector = Vector3.zero;
+    Vector3 _moveVector = Vector3.zero;
 
     // Start is called before the first frame update
     void Awake()
@@ -30,8 +30,8 @@ public class NetworkPlayerControllerBasic : NetworkBehaviour
         }
         Vector3 inputVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
-        moveVector = inputVector * moveSpeed * Time.deltaTime;
-        //transform.position += moveVector;
+        _moveVector = inputVector * moveSpeed * Time.deltaTime;
+        //transform.position += _moveVector;
     }
 
     private void FixedUpdate()
@@ -40,7 +40,7 @@ public class NetworkPlayerControllerBasic : NetworkBehaviour
         {
             return;
         }
-        rigidbody.velocity = moveVector;
+        rigidbody.velocity = _moveVector;
     }
 
 

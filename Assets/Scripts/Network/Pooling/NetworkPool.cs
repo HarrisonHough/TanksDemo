@@ -6,12 +6,12 @@ using UnityEngine.Networking;
 public class NetworkPool : NetworkBehaviour
 {
     [SerializeField]
-    private GameObject prefabToPool;
+    private GameObject _prefabToPool;
     [SerializeField]
-    private int poolSize = 50;
+    private int _poolSize = 50;
 
-    private Queue<GameObject> objectsQueue = new Queue<GameObject>();
-    private List<GameObject> objectPool = new List<GameObject>();
+    private Queue<GameObject> _objectsQueue = new Queue<GameObject>();
+    private List<GameObject> _objectPool = new List<GameObject>();
 
     public NetworkHash128 assetId { get; set; }
 
@@ -33,12 +33,12 @@ public class NetworkPool : NetworkBehaviour
     /// <returns></returns>
     public GameObject GetObject()
     {
-        if (objectsQueue.Count == 0)
+        if (_objectsQueue.Count == 0)
         {
             GrowPool();
         }
 
-        var pooledObject = objectsQueue.Dequeue();
+        var pooledObject = _objectsQueue.Dequeue();
         pooledObject.SetActive(true);
         return pooledObject;
     }
@@ -49,13 +49,13 @@ public class NetworkPool : NetworkBehaviour
     /// </summary>
     private void GrowPool()
     {
-        assetId = prefabToPool.GetComponent<NetworkIdentity>().assetId;
+        assetId = _prefabToPool.GetComponent<NetworkIdentity>().assetId;
 
-        int lastPoolSize = objectPool.Count;
-        for (int i = 0; i < poolSize; i++)
+        int lastPoolSize = _objectPool.Count;
+        for (int i = 0; i < _poolSize; i++)
         {
 
-            var pooledObject = Instantiate(prefabToPool);
+            var pooledObject = Instantiate(_prefabToPool);
             pooledObject.name += " " + (i + lastPoolSize);
             pooledObject.transform.parent = transform;
             pooledObject.AddComponent<NetworkPoolMember>();
@@ -65,7 +65,7 @@ public class NetworkPool : NetworkBehaviour
 
 
             //add to pool
-            objectPool.Add(pooledObject);
+            _objectPool.Add(pooledObject);
 
             pooledObject.SetActive(false);
         }
@@ -90,7 +90,7 @@ public class NetworkPool : NetworkBehaviour
     /// <param name="pooledObject"></param>
     private void AddObjectToAvailable(GameObject pooledObject)
     {
-        objectsQueue.Enqueue(pooledObject);
+        _objectsQueue.Enqueue(pooledObject);
     }
 
     public void DisableAfterDelay(GameObject objectToDisable, float delay)

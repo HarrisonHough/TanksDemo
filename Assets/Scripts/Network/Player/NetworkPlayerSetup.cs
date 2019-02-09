@@ -13,7 +13,7 @@ public class NetworkPlayerSetup : NetworkBehaviour
     public string PlayerName = "PLAYER";
 
     [SerializeField]
-    private Text playerNameText;
+    private Text _playerNameText;
     [SerializeField]
     private MeshRenderer[] meshesToColour;
 
@@ -21,17 +21,6 @@ public class NetworkPlayerSetup : NetworkBehaviour
     {
         base.OnStartLocalPlayer();
         Camera.main.GetComponent<CameraFollow>().SetTarget(gameObject);
-
-        //         for (int i = 0; i < meshesToColour.Length; i++)
-        //         {
-        //             meshesToColour[i].materials[0].color = playerColor;
-        //         }
-        // 
-        //         if (playerNameText != null)
-        //         {
-        //             playerNameText.enabled = true;
-        //             playerNameText.text = playerName + " "+ + playerNum;
-        //         }
     }
 
     public override void OnStartClient()
@@ -66,12 +55,12 @@ public class NetworkPlayerSetup : NetworkBehaviour
 
     void UpdateName(string name)
     {
-        if (playerNameText == null)
+        if (_playerNameText == null)
         {
             //TODO create coroutine to disable player name after a while?
-            playerNameText.enabled = false;
+            _playerNameText.enabled = false;
             return;
         }
-        playerNameText.text = name;
+        _playerNameText.text = name;
     }
 }

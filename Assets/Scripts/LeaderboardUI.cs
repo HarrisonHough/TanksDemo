@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class LeaderboardUI : MonoBehaviour {
 
     [SerializeField]
-    private Text[] playerNameText;
+    private Text[] _playerNameText;
     [SerializeField]
-    private Text[] playerScoreText;
+    private Text[] _playerScoreText;
 
 
 
@@ -20,10 +20,10 @@ public class LeaderboardUI : MonoBehaviour {
 
     public void ClearScoreBoard()
     {
-        for (int i = 0; i < playerNameText.Length; i++)
+        for (int i = 0; i < _playerNameText.Length; i++)
         {
-            playerNameText[i].text =  "";
-            playerScoreText[i].text = "";
+            _playerNameText[i].text =  "";
+            _playerScoreText[i].text = "";
         }
     }
 
@@ -31,8 +31,8 @@ public class LeaderboardUI : MonoBehaviour {
     {
         for (int i = 0; i < playerNames.Length; i++)
         {
-            playerNameText[i].text = playerNames[i];
-            playerScoreText[i].text = ""+playerScores[i];
+            _playerNameText[i].text = playerNames[i];
+            _playerScoreText[i].text = ""+playerScores[i];
         }
     }
 }

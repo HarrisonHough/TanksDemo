@@ -5,42 +5,42 @@ using UnityEngine;
 public class TankShoot : MonoBehaviour
 {
     [SerializeField]
-    private Transform bulletSpawnPoint;
+    private Transform _bulletSpawnPoint;
     [SerializeField]
-    private int shotsPerBurst = 2;
+    private int _shotsPerBurst = 2;
 
-    private int shotsLeft = 0;
-    bool isReloading = false;
+    private int _shotsLeft = 0;
+    private bool _isReloading = false;
     [SerializeField]
-    private float reloadTime = 1f;
+    private float _reloadTime = 1f;
 
-    public LayerMask obstacleMask;
-    bool canShoot = false;
+    public LayerMask ObstacleMask;
+    private bool _canShoot = false;
 
     private void OnEnable()
     {
-        shotsLeft = shotsPerBurst;
-        isReloading = false;
-        canShoot = true;
+        _shotsLeft = _shotsPerBurst;
+        _isReloading = false;
+        _canShoot = true;
     }
 
     private void OnDisable()
     {
-        canShoot = false;
+        _canShoot = false;
     }
 
     public void Shoot()
     {
-        if (isReloading || !canShoot)
+        if (_isReloading || !_canShoot)
         {
             return;
         }
 
         RaycastHit hit;
-        Vector3 center = new Vector3(transform.position.x, bulletSpawnPoint.position.y, transform.position.z);
-        Vector3 direction = (bulletSpawnPoint.position - center).normalized;
+        Vector3 center = new Vector3(transform.position.x, _bulletSpawnPoint.position.y, transform.position.z);
+        Vector3 direction = (_bulletSpawnPoint.position - center).normalized;
 
-        if (Physics.SphereCast(center, 0.25f, direction, out hit, 2.6f, obstacleMask, QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(center, 0.25f, direction, out hit, 2.6f, ObstacleMask, QueryTriggerInteraction.Ignore))
         {
             //Miss Fire
         }
@@ -48,7 +48,7 @@ public class TankShoot : MonoBehaviour
         {
             SpawnBullet();
 
-            if (shotsLeft <= 0)
+            if (_shotsLeft <= 0)
             {
                 StartCoroutine(Reload());
             }
@@ -58,23 +58,23 @@ public class TankShoot : MonoBehaviour
     private void SpawnBullet()
     {
         GameObject bullet = GameManager.Instance.BulletPool.GetObject();
-        bullet.transform.position = bulletSpawnPoint.position;
-        bullet.transform.rotation = bulletSpawnPoint.rotation;
+        bullet.transform.position = _bulletSpawnPoint.position;
+        bullet.transform.rotation = _bulletSpawnPoint.rotation;
         bullet.SetActive(true);
-        bullet.GetComponent<Bullet>().SetVelocity(bulletSpawnPoint);
-        shotsLeft--;
+        bullet.GetComponent<Bullet>().SetVelocity(_bulletSpawnPoint);
+        _shotsLeft--;
     }
 
     IEnumerator Reload()
     {
-        shotsLeft = shotsPerBurst;
-        isReloading = true;
+        _shotsLeft = _shotsPerBurst;
+        _isReloading = true;
         float timeElapsed = 0;
-        while (timeElapsed < reloadTime)
+        while (timeElapsed < _reloadTime)
         {
             timeElapsed += Time.deltaTime;
             yield return null;
         }
-        isReloading = false;
+        _isReloading = false;
     }
 }
